@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: pgpool
 spec:
-  replicas: 1
+  replicas: 3
   selector:
     matchLabels:
       app: pgpool
@@ -14,17 +14,17 @@ spec:
     spec:
       containers:
       - name: pgpool
-        image: pgpool/pgpool
+        image: pgpool/pgpool:4.3.3
         env:
         - name: POSTGRES_USERNAME
           valueFrom:
             secretKeyRef:
-              name: mypostgres-postgres-secret
+              name: postgres.acid-minimal-cluster.credentials.postgresql.acid.zalan.do
               key: username
         - name: POSTGRES_PASSWORD
           valueFrom:
             secretKeyRef:
-              name: mypostgres-postgres-secret
+              name: postgres.acid-minimal-cluster.credentials.postgresql.acid.zalan.do
               key: password
         - name: PGPOOL_PASSWORD_ENCRYPTION_METHOD
           value: "scram-sha-256"
@@ -32,19 +32,6 @@ spec:
           value: "true"
         - name: PGPOOL_SKIP_PASSWORD_ENCRYPTION
           value: "false"
-        # The following settings are not required when not using the Pgpool-II PCP command.
-        # To enable the following settings, you must define a secret that stores the PCP user's
-        # username and password.
-        #- name: PGPOOL_PCP_USER
-        #  valueFrom:
-        #    secretKeyRef:
-        #      name: pgpool-pcp-secret
-        #      key: username
-        #- name: PGPOOL_PCP_PASSWORD
-        #  valueFrom:
-        #    secretKeyRef:
-        #      name: pgpool-pcp-secret
-        #      key: password
         volumeMounts:
         - name: pgpool-config
           mountPath: /config
@@ -75,5 +62,5 @@ spec:
   ports:
   - name: pgpool-port
     protocol: TCP
-    port: 9999
-    targetPort: 9999
+    port: 5432
+    targetPort: 5432
