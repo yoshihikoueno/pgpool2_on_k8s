@@ -57,6 +57,7 @@ kind: Service
 metadata:
   name: pgpool
 spec:
+  type: LoadBalancer
   selector:
     app: pgpool
   ports:
